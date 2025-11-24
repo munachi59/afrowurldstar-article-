@@ -1,4 +1,3 @@
-# afrowurldstar-article
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,11 +64,12 @@
                 <p class="mb-4">The Skip Rate is the most brutal metric in the modern music economy. It is the percentage of users who opt to manually skip your song before the official "stream" counts (usually after 30 seconds). If a track has a high skip rate, the streaming algorithm sees this as a sign of listener dissatisfaction. The song is not just failing—it is actively <span class="font-bold text-red-400">costing the platform engagement time.</span> This negative signal results in the algorithm dramatically reducing the song's placement in curated playlists, Discover Weekly, and algorithmic radio. High skip rates kill organic growth.</p>
                 <p class="mb-4">The Afrobeats Challenge today is creating <span class="font-bold">skip-proof</span> music. Producers are now forced to front-load the most dynamic, rhythmic, or melodic element of the track (often the chorus or the primary hook) within the first 15 seconds to ensure the listener is hooked past the 30-second decision point. Long, atmospheric, or slow-building intros—common in classic Afrobeats—are now an existential threat to chart success.</p>
 
-                <!-- Placeholder for Image to represent analytics -->
-                <div class="bg-gray-800 p-4 rounded-lg my-6 border border-blue-500/50">
-                    <p class="text-center text-blue-400 font-mono text-sm">GRAPHIC A: Skip Rate vs. Replay Count (Streaming Analytics Dashboard)</p>
-                    <p class="text-center text-xs mt-1 text-gray-500">Visualization required here to show skip rate threshold.</p>
-                </div>
+                <!-- ACTUAL IMAGE 1: Skip Rate vs. Replay Count -->
+                <figure class="my-6">
+                    <img src="https://placehold.co/800x250/0f172a/3b82f6?text=GRAPHIC+A%3A+Skip+Rate+vs.+Replay+Count" alt="Conceptual graph showing Skip Rate and Replay Count analytics." class="w-full rounded-lg shadow-xl border border-blue-500/50">
+                    <figcaption class="text-center text-xs mt-2 text-gray-500">Conceptual visualization of a streaming analytics dashboard showing the inverse relationship between high Skip Rate and low Replay Count.</figcaption>
+                </figure>
+
 
                 <h4 class="text-xl font-semibold mt-6 mb-2 text-blue-400">B. Replay Rate and Loop Count: The Quality Signal</h4>
                 <p class="mb-4">If the Skip Rate is a negative indicator, the Replay Rate is the ultimate positive indicator of quality. <span class="font-bold">Replay Rate</span> measures the percentage of users who choose to listen to the song again shortly after it finished. <span class="font-bold">Loop Count</span> tracks how many times a user immediately loops the track or places it on repeat.</p>
@@ -89,11 +89,12 @@
                 <p class="mb-4">Sound Separation occurs when the distinct elements of a track become viral independent of the artist or the lyrics. We saw this in our Dawie Spotlight: the <span class="font-bold">UK Drill triplet rhythm</span> was the asset that went viral, not necessarily the track's main verse.</p>
                 <p>When Sound Separation is high, the producer is the most valuable asset. The beat, the log drum pattern, or the signature FX (like a distinct vocal chop) becomes the intellectual property that A&R hunts for. This decentralizes power away from the singer and places the analytical focus directly onto the beat-maker, who can prove their sound moves UGC velocity. The producer is no longer a collaborator; they are a hit factory optimized for the 10-second loop.</p>
 
-                <!-- Placeholder for Image to represent virality -->
-                <div class="bg-gray-800 p-4 rounded-lg my-6 border border-blue-500/50">
-                    <p class="text-center text-blue-400 font-mono text-sm">GRAPHIC B: UGC Velocity Chart (TikTok User Generated Content Count)</p>
-                    <p class="text-center text-xs mt-1 text-gray-500">Visualization required here showing the rapid rise of UGC.</p>
-                </div>
+                <!-- ACTUAL IMAGE 2: UGC Velocity Chart -->
+                <figure class="my-6">
+                    <img src="https://placehold.co/800x250/0f172a/3b82f6?text=GRAPHIC+B%3A+UGC+Velocity+Chart" alt="Conceptual chart showing rapid UGC Velocity growth." class="w-full rounded-lg shadow-xl border border-blue-500/50">
+                    <figcaption class="text-center text-xs mt-2 text-gray-500">Conceptual chart showing the rapid, exponential rise of User-Generated Content (UGC) count over the first 48 hours.</figcaption>
+                </figure>
+
             </section>
 
             <!-- Section IV: New Structure -->
