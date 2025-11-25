@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFROWURLDSTAR: Producer Hook Timeline Tool</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for branding and readability */
+        :root {
+            --color-primary: #0f172a; /* Deep Black/Slate */
+            --color-secondary: #3b82f6; /* Electric Blue */
+            --color-alert: #ef4444; /* Red for Skip Zone */
+            --color-safe: #10b981; /* Green for Stream Zone */
+            --color-trigger: #f59e0b; /* Yellow for Hook Trigger */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-primary);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .timeline-container {
+            position: relative;
+            height: 100px; /* Fixed height for the visual bar */
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .timeline-segment {
+            position: absolute;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+            cursor: default;
+        }
+        .timeline-marker {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background-color: white;
+            z-index: 10;
+        }
+        /* Style the range slider track for better visibility */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #475569; /* Slate 600 */
+            border-radius: 4px;
+            outline: none;
+            opacity: 0.8;
+            transition: opacity .2s;
+        }
+
+        /* Style the range slider thumb */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--color-secondary);
+            cursor: grab;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.8);
+            margin-top: -6px; /* Center the thumb vertically */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <!-- Header & Branding Section -->
+        <header class="mb-10 pt-4 text-center">
+            <h1 class="text-xs tracking-widest font-bold uppercase mb-2 text-gray-400">AFROWURLDSTAR TOOLKIT</h1>
+            <h2 class="text-4xl md:text-5xl font-extrabold leading-tight mb-2 text-blue-400">The Hook Timeline Tool</h2>
+            <p class="text-lg md:text-xl text-gray-300">Visualize the <span class="text-yellow-400 font-bold">"Rule of 7 Seconds"</span> for your next Afrobeats hit.</p>
+            <div class="mt-4 h-1 w-24 bg-blue-500 rounded-full mx-auto"></div>
+        </header>
+
+        <!-- Tool & Explanation Section -->
+        <div class="bg-slate-800 p-6 rounded-xl shadow-lg">
+            <h3 class="text-2xl font-bold mb-4 text-gray-100">The Critical 30 Seconds: Maximize Stream Counts</h3>
+            <p class="text-gray-400 mb-6">The first 30 seconds are all that matter. Use this visual guide to ensure your key song elements land before the critical skip window closes.</p>
+            
+            <!-- Timeline Bar Container -->
+            <div id="timeline" class="timeline-container relative mb-8">
+                <!-- Segments will be drawn here by JS -->
+            </div>
+
+            <!-- Timeline Legends -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm font-semibold mb-6">
+                <div class="flex items-start">
+                    <div class="w-4 h-4 rounded-full mt-1 flex-shrink-0 mr-3" style="background-color: var(--color-alert);"></div>
+                    <div>**0-7s: Hook Zone** Must deliver an irresistible sound asset to prevent an immediate skip.</div>
+                </div>
+                <div class="flex items-start">
+                    <div class="w-4 h-4 rounded-full mt-1 flex-shrink-0 mr-3" style="background-color: var(--color-trigger);"></div>
+                    <div>**7-15s: Skip Window** Keep reinforcing value. The threat of a skip is highest here.</div>
+                </div>
+                <div class="flex items-start">
+                    <div class="w-4 h-4 rounded-full mt-1 flex-shrink-0 mr-3" style="background-color: var(--color-safe);"></div>
+                    <div>**15-30s: Stream Safe Zone** If the listener is here, they are highly likely to complete the 30 seconds and register a stream.</div>
+                </div>
+            </div>
+            
+            <div class="flex justify-between text-sm font-semibold mt-2">
+                <span id="start_time" class="text-blue-400">0:00</span>
+                <span id="thirty_seconds" class="text-white font-bold">30 Seconds (Stream Threshold)</span>
+            </div>
+        </div>
+
+        <!-- Component Placement Section (User Interaction) -->
+        <div class="mt-10 bg-slate-800 p-6 rounded-xl shadow-lg">
+            <h3 class="text-2xl font-bold mb-4 text-gray-100">Producer Component Placement</h3>
+            <p class="text-gray-300 mb-6">Drag the sliders to the exact second where each critical component of your track lands. Feedback will appear instantly below.</p>
+
+            <div class="space-y-6">
+                <!-- Component 1: Main Drum Pattern -->
+                <div class="p-4 bg-slate-700 rounded-lg">
+                    <label for="drumTime" class="block text-base font-semibold text-white mb-3">1. Main Rhythmic Pattern/Log Drum Hit (Target: < 7s):</label>
+                    <input type="range" id="drumTime" min="0" max="30" value="5" step="0.5" class="w-full" oninput="updateMarker('drumTime', 'drumMarker')">
+                    <p class="text-sm mt-2 text-gray-400 font-mono" id="drumMarker">Time: 5.0 seconds</p>
+                </div>
+
+                <!-- Component 2: Lead Vocal/Ad-lib Hook -->
+                <div class="p-4 bg-slate-700 rounded-lg">
+                    <label for="vocalTime" class="block text-base font-semibold text-white mb-3">2. Lead Vocal/Ad-lib Hook Start (Target: < 15s):</label>
+                    <input type="range" id="vocalTime" min="0" max="30" value="12" step="0.5" class="w-full" oninput="updateMarker('vocalTime', 'vocalMarker')">
+                    <p class="text-sm mt-2 text-gray-400 font-mono" id="vocalMarker">Time: 12.0 seconds</p>
+                </div>
+
+                <!-- Component 3: Main Chorus Melody/Bassline -->
+                <div class="p-4 bg-slate-700 rounded-lg">
+                    <label for="chorusTime" class="block text-base font-semibold text-white mb-3">3. Main Chorus/Melody/Bassline Drop (Target: < 20s):</label>
+                    <input type="range" id="chorusTime" min="0" max="30" value="18" step="0.5" class="w-full" oninput="updateMarker('chorusTime', 'chorusMarker')">
+                    <p class="text-sm mt-2 text-gray-400 font-mono" id="chorusMarker">Time: 18.0 seconds</p>
+                </div>
+            </div>
+
+            <!-- Analysis Output -->
+            <div class="mt-8 p-4 bg-slate-900 rounded-lg border border-blue-500/50">
+                <p class="text-xl font-extrabold text-blue-400 mb-2">Algorithm Readiness Report:</p>
+                <div id="analysisOutput" class="space-y-3 text-sm">
+                    <!-- Feedback injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-6 border-t border-gray-700/50 text-center text-gray-500 text-sm">
+            <p>&copy; 2024 AFROWURLDSTAR. The Analytical Hub for Global Afrobeats.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const timelineEl = document.getElementById('timeline');
+        const analysisOutputEl = document.getElementById('analysisOutput');
+        
+        // Define critical time points
+        const CRITICAL_SECONDS = 30;
+        const HOOK_TRIGGER_DEADLINE = 7; 
+        const VOCAL_DEADLINE = 15;
+        const CHORUS_DEADLINE = 20;
+
+        // Draws the main 30-second timeline bar
+        function drawTimeline() {
+            timelineEl.innerHTML = '';
+
+            // Segment 1: Hook Zone (0-7 seconds) - Red/Alert
+            const segment1Width = (HOOK_TRIGGER_DEADLINE / CRITICAL_SECONDS) * 100;
+            const segment1 = document.createElement('div');
+            segment1.className = 'timeline-segment bg-red-600/70';
+            segment1.style.left = '0%';
+            segment1.style.width = `${segment1Width}%`;
+            segment1.innerHTML = `<span class="text-xs md:text-sm">0-7s<br>HOOK ZONE</span>`;
+            timelineEl.appendChild(segment1);
+
+            // Segment 2: Skip Window (7-15 seconds) - Yellow/Trigger
+            const segment2Duration = VOCAL_DEADLINE - HOOK_TRIGGER_DEADLINE;
+            const segment2Width = (segment2Duration / CRITICAL_SECONDS) * 100;
+            const segment2 = document.createElement('div');
+            segment2.className = 'timeline-segment bg-yellow-600/70';
+            segment2.style.left = `${segment1Width}%`;
+            segment2.style.width = `${segment2Width}%`;
+            segment2.innerHTML = `<span class="text-xs md:text-sm">7-15s<br>SKIP WINDOW</span>`;
+            timelineEl.appendChild(segment2);
+            
+            // Segment 3: Stream Safe Zone (15-30 seconds) - Green/Safe
+            const segment3Duration = CRITICAL_SECONDS - VOCAL_DEADLINE;
+            const segment3Width = (segment3Duration / CRITICAL_SECONDS) * 100;
+            const segment3 = document.createElement('div');
+            segment3.className = 'timeline-segment bg-green-600/70';
+            segment3.style.left = `${segment1Width + segment2Width}%`;
+            segment3.style.width = `${segment3Width}%`;
+            segment3.innerHTML = `<span class="text-xs md:text-sm">15-30s<br>STREAM SAFE ZONE</span>`;
+            timelineEl.appendChild(segment3);
+
+            // Add the 30-second marker
+            const marker30 = document.createElement('div');
+            marker30.className = 'timeline-marker bg-white';
+            marker30.style.left = '100%';
+            marker30.title = '30s: Stream Count Starts Here';
+            timelineEl.appendChild(marker30);
+            
+            // Add the 7-second marker
+            const marker7 = document.createElement('div');
+            marker7.className = 'timeline-marker bg-yellow-300';
+            marker7.style.left = `${(HOOK_TRIGGER_DEADLINE / CRITICAL_SECONDS) * 100}%`;
+            marker7.title = '7s: Hook Trigger Deadline';
+            timelineEl.appendChild(marker7);
+
+            // Add the 15-second marker
+            const marker15 = document.createElement('div');
+            marker15.className = 'timeline-marker bg-blue-400';
+            marker15.style.left = `${(VOCAL_DEADLINE / CRITICAL_SECONDS) * 100}%`;
+            marker15.title = '15s: Vocal Hook Deadline / Start of Safe Zone';
+            timelineEl.appendChild(marker15);
+        }
+
+        // Updates the time displayed next to the slider and runs analysis
+        function updateMarker(sliderId, markerId) {
+            const slider = document.getElementById(sliderId);
+            const marker = document.getElementById(markerId);
+            const time = parseFloat(slider.value).toFixed(1);
+            marker.textContent = `Time: ${time} seconds`;
+            updateAnalysis();
+        }
+
+        // Provides feedback on the component placement
+        function updateAnalysis() {
+            const drumTime = parseFloat(document.getElementById('drumTime').value);
+            const vocalTime = parseFloat(document.getElementById('vocalTime').value);
+            const chorusTime = parseFloat(document.getElementById('chorusTime').value);
+
+            let feedback = [];
+
+            // Feedback for Drum Pattern (0-7s)
+            if (drumTime <= HOOK_TRIGGER_DEADLINE) {
+                feedback.push(`<span class="text-green-400">✅ Rhythmic Pattern at ${drumTime}s: **Excellent.** Hits within the critical 7-second trigger window for UGC velocity.</span>`);
+            } else if (drumTime <= VOCAL_DEADLINE) {
+                feedback.push(`<span class="text-yellow-400">⚠️ Rhythmic Pattern at ${drumTime}s: **Sub-optimal.** You are risking immediate skips by delaying the main beat. Aim for < 7s.</span>`);
+            } else {
+                feedback.push(`<span class="text-red-400">❌ Rhythmic Pattern at ${drumTime}s: **Failure.** The core beat is too late. The song is dead before the listener hears it.</span>`);
+            }
+
+            // Feedback for Vocal Hook (0-15s)
+            if (vocalTime <= VOCAL_DEADLINE) {
+                feedback.push(`<span class="text-green-400">✅ Vocal Hook at ${vocalTime}s: **Good.** Provides key melody before the Stream Safe Zone (15s).</span>`);
+            } else if (vocalTime <= CHORUS_DEADLINE) {
+                feedback.push(`<span class="text-yellow-400">⚠️ Vocal Hook at ${vocalTime}s: **Risky.** Gets close to the 30-second deadline; this component is vital for the 7-15s skip window.</span>`);
+            } else {
+                feedback.push(`<span class="text-red-400">❌ Vocal Hook at ${vocalTime}s: **Very Late.** The listener is likely gone before they hear the first hook.</span>`);
+            }
+            
+            // Feedback for Main Chorus/Melody (0-20s)
+            if (chorusTime <= CHORUS_DEADLINE) {
+                feedback.push(`<span class="text-green-400">✅ Main Chorus at ${chorusTime}s: **Hit-Ready.** Reinforces value and hooks the listener well before the 30-second stream count.</span>`);
+            } else if (chorusTime <= CRITICAL_SECONDS) {
+                feedback.push(`<span class="text-yellow-400">⚠️ Main Chorus at ${chorusTime}s: **Too close.** You are giving up potential streams by delaying the payoff until the last moment.</span>`);
+            } else {
+                 feedback.push(`<span class="text-red-400">❌ Main Chorus at ${chorusTime}s: **Unacceptable.** The song's payoff must occur within the first 30 seconds.</span>`);
+            }
+
+            analysisOutputEl.innerHTML = feedback.join('');
+        }
+
+        // Initialize markers and timeline on load
+        window.onload = function() {
+            drawTimeline();
+            // Manually trigger updates for initial default values
+            updateMarker('drumTime', 'drumMarker');
+            updateMarker('vocalTime', 'vocalMarker');
+            updateMarker('chorusTime', 'chorusMarker');
+            updateAnalysis();
+        };
+    </script>
+
+</body>
+</html>
+
